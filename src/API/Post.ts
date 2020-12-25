@@ -8,6 +8,10 @@ export class Post extends APIService {
     Post.subUrl = _url;
   }
 
+  get subUrl() {
+    return Post.subUrl;
+  }
+
   constructor() {
     super();
   }

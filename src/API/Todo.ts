@@ -11,6 +11,10 @@ export class Todo extends APIService {
     Todo.subUrl = _url;
   }
 
+  get subUrl() {
+    return Todo.subUrl;
+  }
+
   public async getTodos () {
     const res = await this
       .setMethod('GET')

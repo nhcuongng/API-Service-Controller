@@ -21,7 +21,7 @@ export class APIService {
    * 
    * Error handler sẽ chịu trách nhiệm xử lý các request bị lỗi
    */
-  static errorHandler: any = null;
+  private errorHandler: any = null;
 
   /**
    * @memberof APIService
@@ -69,6 +69,7 @@ export class APIService {
         Authorization: `Bearer ${APIService.token}`,
       };
     }
+    // nếu header tồn tại
     if (Object.keys(this.headers).length > 0 && this.headers.constructor === Object) {
       axiosConfig.headers = {
         ...axiosConfig.headers,
@@ -90,7 +91,7 @@ export class APIService {
   }
 
   /**
-   * Phân tích kết quả trả về từ ```APIService._fetch()```
+   * Phân tích kết quả trả về từ ```thís._fetch()```
    * @param result 
    */
   private async _parseResult<T>(result: AxiosResponse | { status: string, data: T | undefined } | null) {
@@ -107,8 +108,8 @@ export class APIService {
       };
     }
     if (result.status === 401) {
-      if (APIService.errorHandler) {
-        APIService.errorHandler(result);
+      if (this.errorHandler) {
+        this.errorHandler(result);
       }
       return {
         success: false,
