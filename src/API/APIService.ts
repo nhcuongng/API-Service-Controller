@@ -1,7 +1,5 @@
-import { ApiMethod } from "../types";
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { Post } from "./Post";
-import { Todo } from "./Todo";
+import { ApiMethod } from '../@types/api.types';
 
 export class APIService {
   /**
@@ -66,7 +64,7 @@ export class APIService {
    * @param url sub url gửi lên server
    * @param body nếu ```APIService.method``` là PUT, POST.. thì cần body
    */
-  static async _fetch<T>(url: string, body?: T) {
+  private static async _fetch<T>(url: string, body?: T) {
     const END_POINT = `${APIService.urlBase}${url}`;
     const axiosConfig: AxiosRequestConfig = {};
     if (APIService.token) {
@@ -92,7 +90,7 @@ export class APIService {
    * Phân tích kết quả trả về từ ```APIService._fetch()```
    * @param result 
    */
-  static async parseResult<T>(result: AxiosResponse | { status: string, data: T | undefined } | null) {
+  private static async _parseResult<T>(result: AxiosResponse | { status: string, data: T | undefined } | null) {
     if (!result || !result.status) {
       return {
         success: false,
@@ -143,21 +141,15 @@ export class APIService {
   static async request<T> (url: string, body?: T) {
     try {
       const result = await this._fetch(url, body);
-      return APIService.parseResult<T>(result);
+      return APIService._parseResult<T>(result);
     } catch (error) {
       if (error.response && error.response.status) {
-        return APIService.parseResult<T>({
+        return APIService._parseResult<T>({
           status: error.response.status,
           data: error.response.data as T,
         });
       }
-      return APIService.parseResult<T>(null);
+      return APIService._parseResult<T>(null);
     }
   }
-
-  /* -------------------------------------------------------------------------- */
-  /*     CHIA NHỎ CODE RA MỖI CLASS SẼ QUẢN LÝ CÁC REQUEST LIÊN QUAN ĐẾN NÓ     */
-  /* -------------------------------------------------------------------------- */
-  static Post = Post
-  static Todo = Todo
 }

@@ -1,10 +1,12 @@
 import { APIService } from "./APIService";
 
-export class Todo {
+export class Todo extends APIService {
   static urlBase = '/todos';
 
   static async getTodos () {
-    const res = await APIService.request(this.urlBase);
+    const res = await super
+      .setMethod('GET')
+      .request(Todo.urlBase);
     return res;
   }
 }

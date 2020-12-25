@@ -1,23 +1,25 @@
 import { IPost } from "../@types/post.types";
 import { APIService } from "./APIService";
 
-export class Post {
+export class Post extends APIService {
   static urlBase = '/posts';
 
   static async getPosts() {
-    const res = await APIService
+    const res = await super
       .setMethod('GET')
-      .request<IPost[]>(this.urlBase);
+      .request(Post.urlBase);
     return res;
   }
 
   static async getPost(id: number) {
-    const res = await APIService.request<IPost>(`${this.urlBase}/${id}`);
+    const res = await super
+      .setMethod('GET')
+      .request<IPost>(`${this.urlBase}/${id}`);
     return res;
   }
 
   static async createPost(post: IPost) {
-    const res = await APIService
+    const res = await super
       .setMethod('POST')
       .request<IPost>(this.urlBase, post)
     return res;

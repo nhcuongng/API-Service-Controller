@@ -1,22 +1,22 @@
 import React, { useCallback, useState } from 'react';
-import { APIService } from '../API/APIService';
+import { Post } from '../API/Post';
 import { DisplayResult } from './displayResults';
 
 export const GetPosts: React.FC = () => {
   const [res, setRes] = useState('');
 
   const handlegetPosts = useCallback(async () => {
-    const _res = await APIService.Post.getPosts();
+    const _res = await Post.getPosts();
     setRes(JSON.stringify(_res, null, 2))
   }, [])
 
   const handlegetPost = useCallback(async (id: number) => {
-    const _res = await APIService.Post.getPost(id);
+    const _res = await Post.getPost(id);
     setRes(JSON.stringify(_res, null, 2))
   }, [])
 
   const handleCreatePost = useCallback(async () => {
-    const _res = await APIService.Post.createPost({
+    const _res = await Post.createPost({
       title: 'create new blog with API Service Manager',
       body: 'Dummy code...',
       userId: 'Mason Nguyen',

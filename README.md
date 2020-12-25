@@ -7,6 +7,10 @@ Tính năng
 - Dễ maintain
 - Typescript
 
+## Kiến thức cần có
+
+Cần chuẩn bị sãn các kiến thức về class như từ khoá ```static```, ```set```, ```get```, ```super```
+
 ## Luồng code
 
 Tập trung chính vào folder **src/API/APIService.ts**, folder **src/Components** là import từ **APIService** ra dùng, mục đính chính là hướng dẫn cách dùng
