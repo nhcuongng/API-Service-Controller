@@ -8,6 +8,7 @@ const App: React.FC = () => {
   useEffect(() => {
     // set urlBase cho APIService
     APIService.urlBase = 'https://jsonplaceholder.typicode.com';
+    APIService.token = 'SOME_SECRET'
   }, [])
 
   return (

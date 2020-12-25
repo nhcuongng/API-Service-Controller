@@ -2,26 +2,39 @@ import { IPost } from "../@types/post.types";
 import { APIService } from "./APIService";
 
 export class Post extends APIService {
-  static urlBase = '/posts';
+  static subUrl = '/posts';
 
-  static async getPosts() {
-    const res = await super
+  set subUrl (_url: string) {
+    Post.subUrl = _url;
+  }
+
+  constructor() {
+    super();
+  }
+
+  public async getPosts() {
+    const res = await this
       .setMethod('GET')
-      .request(Post.urlBase);
+      .request(Post.subUrl);
     return res;
   }
 
-  static async getPost(id: number) {
-    const res = await super
+  public async getPost(id: number) {
+    const res = await this
       .setMethod('GET')
-      .request<IPost>(`${this.urlBase}/${id}`);
+      .request<IPost>(`${Post.subUrl}/${id}`);
     return res;
   }
 
-  static async createPost(post: IPost) {
-    const res = await super
+  public async createPost(post: IPost) {
+    const res = await this
+      .setHeaders({
+        test: 'this is a header'
+      })
       .setMethod('POST')
-      .request<IPost>(this.urlBase, post)
+      .request<IPost>(Post.subUrl, post)
     return res;
   }
 }
+
+export const PostApi = new Post();

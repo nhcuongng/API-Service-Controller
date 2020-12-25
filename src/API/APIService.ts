@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { ApiMethod } from '../@types/api.types';
+import { ApiHeader, ApiMethod, KeyValue } from '../@types/api.types';
 
 export class APIService {
   /**
@@ -7,14 +7,14 @@ export class APIService {
    * 
    * Method mà API sẽ gửi lên server
    */
-  static method: ApiMethod = "GET";
+  private method: ApiMethod = "GET";
 
   /**
    * @memberof APIService
    * 
    * Headers gửi lên server
    */
-  static headers: { [x: string]: string } = {};
+  private headers: ApiHeader = {};
 
   /**
    * @memberof APIService
@@ -45,15 +45,12 @@ export class APIService {
     this.urlBase = url;
   }
 
-  set headers (headers: { [x: string]: string }) {
+  public setHeaders (headers: ApiHeader) {
     this.headers = headers;
+    return this;
   }
 
-  set method (newMethod: ApiMethod) {
-    this.method = newMethod;
-  }
-
-  static setMethod (_method: ApiMethod) {
+  public setMethod (_method: ApiMethod) {
     this.method = _method;
     return this;
   }
@@ -64,13 +61,19 @@ export class APIService {
    * @param url sub url gửi lên server
    * @param body nếu ```APIService.method``` là PUT, POST.. thì cần body
    */
-  private static async _fetch<T>(url: string, body?: T) {
+  private async _fetch<T>(url: string, body?: T) {
     const END_POINT = `${APIService.urlBase}${url}`;
-    const axiosConfig: AxiosRequestConfig = {};
+    const axiosConfig: AxiosRequestConfig = {  };
     if (APIService.token) {
       axiosConfig.headers = {
         Authorization: `Bearer ${APIService.token}`,
       };
+    }
+    if (Object.keys(this.headers).length > 0 && this.headers.constructor === Object) {
+      axiosConfig.headers = {
+        ...axiosConfig.headers,
+        ...this.headers,
+      }
     }
     switch (this.method) {
       case 'GET':
@@ -90,7 +93,7 @@ export class APIService {
    * Phân tích kết quả trả về từ ```APIService._fetch()```
    * @param result 
    */
-  private static async _parseResult<T>(result: AxiosResponse | { status: string, data: T | undefined } | null) {
+  private async _parseResult<T>(result: AxiosResponse | { status: string, data: T | undefined } | null) {
     if (!result || !result.status) {
       return {
         success: false,
@@ -138,18 +141,18 @@ export class APIService {
    * @param url 
    * @param body 
    */
-  static async request<T> (url: string, body?: T) {
+  public async request<T> (url: string, body?: T) {
     try {
       const result = await this._fetch(url, body);
-      return APIService._parseResult<T>(result);
+      return this._parseResult<T>(result);
     } catch (error) {
       if (error.response && error.response.status) {
-        return APIService._parseResult<T>({
+        return this._parseResult<T>({
           status: error.response.status,
           data: error.response.data as T,
         });
       }
-      return APIService._parseResult<T>(null);
+      return this._parseResult<T>(null);
     }
   }
 }

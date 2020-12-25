@@ -1,12 +1,12 @@
 import React, { useCallback, useState } from 'react';
-import { Todo } from '../API/Todo';
+import { ToDoApi } from '../API/Todo';
 import { DisplayResult } from './displayResults';
 
 export const GetTodos: React.FC = () => {
   const [res, setRes] = useState('');
 
   const handleGetTodos = useCallback(async () => {
-    const _res = await Todo.getTodos();
+    const _res = await ToDoApi.getTodos();
     setRes(JSON.stringify(_res, null, 2))
   }, [])
 

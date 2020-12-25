@@ -1,12 +1,22 @@
 import { APIService } from "./APIService";
 
 export class Todo extends APIService {
-  static urlBase = '/todos';
+  static subUrl = '/todos';
 
-  static async getTodos () {
-    const res = await super
+  constructor() {
+    super();
+  }
+
+  set subUrl (_url: string) {
+    Todo.subUrl = _url;
+  }
+
+  public async getTodos () {
+    const res = await this
       .setMethod('GET')
-      .request(Todo.urlBase);
+      .request(Todo.subUrl);
     return res;
   }
 }
+
+export const ToDoApi = new Todo()
