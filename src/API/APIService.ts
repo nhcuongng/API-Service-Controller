@@ -4,10 +4,39 @@ import { Post } from "./Post";
 import { Todo } from "./Todo";
 
 export class APIService {
+  /**
+   * @memberof APIService
+   * 
+   * Method mà API sẽ gửi lên server
+   */
   static method: ApiMethod = "GET";
+
+  /**
+   * @memberof APIService
+   * 
+   * Headers gửi lên server
+   */
   static headers: { [x: string]: string } = {};
+
+  /**
+   * @memberof APIService
+   * 
+   * Error handler sẽ chịu trách nhiệm xử lý các request bị lỗi
+   */
   static errorHandler: any = null;
+
+  /**
+   * @memberof APIService
+   * 
+   * Tuthentication token
+   */
   static token: string = '';
+
+  /**
+   * @memberof APIService
+   * 
+   * url base là url host của server
+   */
   static urlBase: string = '';
 
   set token (t: string) {
@@ -31,6 +60,12 @@ export class APIService {
     return this;
   }
 
+  /**
+   * Dùng để xác định dùng method nào để gửi lên server, dựa vào```APIService.method```
+   * 
+   * @param url sub url gửi lên server
+   * @param body nếu ```APIService.method``` là PUT, POST.. thì cần body
+   */
   static async _fetch<T>(url: string, body?: T) {
     const END_POINT = `${APIService.urlBase}${url}`;
     const axiosConfig: AxiosRequestConfig = {};
@@ -53,6 +88,10 @@ export class APIService {
     }
   }
 
+  /**
+   * Phân tích kết quả trả về từ ```APIService._fetch()```
+   * @param result 
+   */
   static async parseResult<T>(result: AxiosResponse | { status: string, data: T | undefined } | null) {
     if (!result || !result.status) {
       return {
@@ -96,6 +135,11 @@ export class APIService {
     };
   }
 
+  /**
+   * Dùng để gửi request lên server
+   * @param url 
+   * @param body 
+   */
   static async request<T> (url: string, body?: T) {
     try {
       const result = await this._fetch(url, body);
@@ -111,6 +155,9 @@ export class APIService {
     }
   }
 
+  /* -------------------------------------------------------------------------- */
+  /*     CHIA NHỎ CODE RA MỖI CLASS SẼ QUẢN LÝ CÁC REQUEST LIÊN QUAN ĐẾN NÓ     */
+  /* -------------------------------------------------------------------------- */
   static Post = Post
   static Todo = Todo
 }

@@ -10,6 +10,7 @@ import { GetTodos } from './components/getTodos';
 const App: React.FC = () => {
 
   useEffect(() => {
+    // set urlBase cho APIService
     APIService.urlBase = 'https://jsonplaceholder.typicode.com';
   }, [])
 
