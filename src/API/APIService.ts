@@ -55,6 +55,11 @@ export class APIService {
     return this;
   }
 
+  public setErrorHandler(_errorHandler: any) {
+    this.errorHandler = _errorHandler;
+    return this;
+  }
+
   /**
    * Dùng để xác định dùng method nào để gửi lên server, dựa vào```APIService.method```
    * 

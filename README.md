@@ -1,8 +1,8 @@
-# API Service Manager
+# API Service Controller
 
 Tính năng
 
-- Kiểm soát các endpoint
+- Xử lý tập trung các request gửi lên server (headers, erorrs...)
 - Dễ đọc
 - Dễ maintain
 - Typescript
@@ -18,8 +18,3 @@ Bắt đầu từ đọc cách sử dụng các components, trong hai files ```g
 Tập trung chính vào file **src/API/APIService.ts**
 
 Mỗi file mình đã có comment chi tiết
-
-## Nguồn tham khảo
-
-- [Medium](https://rossbulat.medium.com/advanced-typescript-by-example-api-service-manager-7ea591f5eba8)
-- Và một nguồn nội bộ không được tiết lộ 🙈 
