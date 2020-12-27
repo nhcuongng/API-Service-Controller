@@ -1,5 +1,5 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { ApiHeader, ApiMethod, KeyValue } from '../@types/api.types';
+import { ApiHeader, ApiMethod } from '../@types/api.types';
 
 export class APIService {
   /**
@@ -26,7 +26,7 @@ export class APIService {
   /**
    * @memberof APIService
    * 
-   * Tuthentication token
+   * Authentication token
    */
   static token: string = '';
 
@@ -61,13 +61,13 @@ export class APIService {
   }
 
   /**
-   * Dùng để xác định dùng method nào để gửi lên server, dựa vào```APIService.method```
+   * Dùng để xác định dùng method nào để gửi lên server, dựa vào```this.method```
    * 
-   * @param url sub url gửi lên server
-   * @param body nếu ```APIService.method``` là PUT, POST.. thì cần body
+   * @param slug sub url gửi lên server
+   * @param body nếu ```this.method``` là PUT, POST.. thì cần body
    */
-  private async _fetch<T>(url: string, body?: T) {
-    const END_POINT = `${APIService.urlBase}${url}`;
+  private async _fetch<T>(slug: string, body?: T) {
+    const END_POINT = `${APIService.urlBase}${slug}`;
     const axiosConfig: AxiosRequestConfig = {  };
     if (APIService.token) {
       axiosConfig.headers = {
@@ -144,12 +144,13 @@ export class APIService {
 
   /**
    * Dùng để gửi request lên server
-   * @param url 
+   * @param slug 
    * @param body 
    */
-  public async request<T> (url: string, body?: T) {
+  public async request<T> (slug: string, body?: T) {
     try {
-      const result = await this._fetch(url, body);
+      const result = await this._fetch(slug, body);
+      this.setHeaders({}); // reset header sau khi gửi request
       return this._parseResult<T>(result);
     } catch (error) {
       if (error.response && error.response.status) {

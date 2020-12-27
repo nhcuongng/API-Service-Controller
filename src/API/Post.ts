@@ -2,31 +2,27 @@ import { IPost } from "../@types/post.types";
 import { APIService } from "./APIService";
 
 export class Post extends APIService {
-  static subUrl = '/posts';
+  static slug = '/posts';
 
-  set subUrl (_url: string) {
-    Post.subUrl = _url;
+  set slug (_url: string) {
+    Post.slug = _url;
   }
 
-  get subUrl() {
-    return Post.subUrl;
-  }
-
-  constructor() {
-    super();
+  get slug() {
+    return Post.slug;
   }
 
   public async getPosts() {
     const res = await this
       .setMethod('GET')
-      .request(Post.subUrl);
+      .request(Post.slug);
     return res;
   }
 
   public async getPost(id: number) {
     const res = await this
       .setMethod('GET')
-      .request<IPost>(`${Post.subUrl}/${id}`);
+      .request<IPost>(`${Post.slug}/${id}`);
     return res;
   }
 
@@ -36,7 +32,7 @@ export class Post extends APIService {
         test: 'this is a header'
       })
       .setMethod('POST')
-      .request<IPost>(Post.subUrl, post)
+      .request<IPost>(Post.slug, post)
     return res;
   }
 }
