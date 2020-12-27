@@ -99,7 +99,7 @@ export class APIService {
    * Phân tích kết quả trả về từ ```thís._fetch()```
    * @param result 
    */
-  private async _parseResult<T>(result: AxiosResponse | { status: string, data: T | undefined } | null) {
+  private async _parseResult<T>(result: AxiosResponse | { status: number, data: T | undefined } | null) {
     if (!result || !result.status) {
       return {
         success: false,
