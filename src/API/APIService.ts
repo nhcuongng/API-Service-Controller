@@ -112,7 +112,7 @@ export class APIService {
       case 'POST':
         return axios.post<RequestBody>(END_POINT, body, axiosConfig);
       case 'DELETE':
-        return axios.delete(END_POINT, axiosConfig);
+        return axios.delete<RequestBody>(END_POINT, axiosConfig);
       case 'PUT':
         return axios.put<RequestBody>(END_POINT, body, axiosConfig);
       default:
