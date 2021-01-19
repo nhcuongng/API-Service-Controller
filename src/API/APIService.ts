@@ -1,77 +1,102 @@
+/* eslint-disable no-underscore-dangle */
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
-import { ApiHeader, ApiMethod } from '../@types/api.types';
+
+export type ApiHeader = { [x: string]: string };
+
+export type ApiMethod = 'POST' | 'GET' | 'PUT' | 'DELETE';
 
 export class APIService {
   /**
    * @memberof APIService
-   * 
-   * Method mà API sẽ gửi lên server
+   *
+   * Methods
    */
-  private method: ApiMethod = "GET";
+  private method: ApiMethod = 'GET';
 
   /**
    * @memberof APIService
-   * 
-   * Headers gửi lên server
+   *
+   * Headers's request
    */
   private headers: ApiHeader = {};
 
   /**
    * @memberof APIService
-   * 
-   * Error handler sẽ chịu trách nhiệm xử lý các request bị lỗi
+   *
+   * Error handler for error requests
    */
-  private errorHandler: any = null;
+  static errorHandler: any = null;
 
   /**
    * @memberof APIService
-   * 
+   *
+   * Error loading for wait response
+   */
+  static loadingHandler: any = null;
+
+  /**
+   * @memberof APIService
+   *
    * Authentication token
    */
   static token: string = '';
 
   /**
    * @memberof APIService
-   * 
-   * url base là url host của server
+   *
+   * url base - host's server
    */
-  static urlBase: string = '';
+  static urlBase: string = 'http://localhost:3000';
 
-  set token (t: string) {
+  set token(t: string) {
     this.token = t;
   }
 
-  set urlBase (url: string) {
+  set urlBase(url: string) {
     this.urlBase = url;
   }
 
-  public setHeaders (headers: ApiHeader) {
+  set errorHandler(_errHandle: any) {
+    this.errorHandler = _errHandle;
+  }
+
+  public setHeaders(headers: ApiHeader) {
     this.headers = headers;
     return this;
   }
 
-  public setMethod (_method: ApiMethod) {
+  public setMethod(_method: ApiMethod) {
     this.method = _method;
     return this;
   }
 
-  public setErrorHandler(_errorHandler: any) {
-    this.errorHandler = _errorHandler;
+  private _callErrorHandler(msg: string) {
+    if (APIService.errorHandler) {
+      APIService.errorHandler(msg);
+    }
+    return this;
+  }
+
+  private _callLoadingHandler() {
+    if (APIService.loadingHandler) {
+      APIService.loadingHandler();
+    }
     return this;
   }
 
   /**
-   * Dùng để xác định dùng method nào để gửi lên server, dựa vào```this.method```
-   * 
-   * @param slug sub url gửi lên server
-   * @param body nếu ```this.method``` là PUT, POST.. thì cần body
+   *  determine method use by axios
+   *
+   * @param slug sub url to server
+   * @param body mothods PUT, POST.. need body
    */
-  private async _fetch<T>(slug: string, body?: T) {
+  private async _fetch<RequestBody>(slug: string, body?: RequestBody) {
     const END_POINT = `${APIService.urlBase}${slug}`;
-    const axiosConfig: AxiosRequestConfig = {  };
-    if (APIService.token) {
+    const axiosConfig: AxiosRequestConfig = {};
+    const token = APIService.token;
+    if (token) {
       axiosConfig.headers = {
-        Authorization: `Bearer ${APIService.token}`,
+        Authorization: `Bearer ${token}`,
       };
     }
     // nếu header tồn tại
@@ -79,87 +104,106 @@ export class APIService {
       axiosConfig.headers = {
         ...axiosConfig.headers,
         ...this.headers,
-      }
+      };
     }
     switch (this.method) {
       case 'GET':
-        return axios.get<T>(END_POINT, axiosConfig);
+        return axios.get<RequestBody>(END_POINT, axiosConfig);
       case 'POST':
-        return axios.post<T>(END_POINT, body, axiosConfig);
+        return axios.post<RequestBody>(END_POINT, body, axiosConfig);
       case 'DELETE':
-        return axios.delete<T>(END_POINT, axiosConfig);
+        return axios.delete(END_POINT, axiosConfig);
       case 'PUT':
-        return axios.put<T>(END_POINT, body, axiosConfig);
+        return axios.put<RequestBody>(END_POINT, body, axiosConfig);
       default:
-        throw new Error('Method is not support or is invalid'); 
+        throw new Error('Method is not support or is invalid');
     }
   }
 
   /**
-   * Phân tích kết quả trả về từ ```thís._fetch()```
-   * @param result 
+   * Parse result from ```thís._fetch()```
+   * 
+   * You can use alter to show message error
+   * 
+   * Except error > 499 need show page error (or something else) because is fatal error
+   * 
+   * @param result
    */
-  private async _parseResult<T>(result: AxiosResponse | { status: number, data: T | undefined } | null) {
+  private async _parseResult<ResponseBody>(
+    result: AxiosResponse<ResponseBody> | { status: number, data: any} | null,
+  ) {
     if (!result || !result.status) {
       return {
         success: false,
         error: 'error:network_error',
       };
     }
+    let msg = result.data.message;
     if (result.status > 499) {
+      msg = msg || 'error:server_error';
+      this._callErrorHandler(msg);
       return {
         success: false,
-        error: result.data.message || 'error:server_error',
+        error: msg,
       };
     }
     if (result.status === 401) {
-      if (this.errorHandler) {
-        this.errorHandler(result);
-      }
       return {
         success: false,
-        error: result.data.message || 'error:unauthorized',
+        error: msg || 'error:unauthorized',
       };
     }
     if (result.status > 399) {
       return {
         success: false,
-        error: result.data.message || 'error:user_generic',
+        error: msg || 'error:generic',
       };
     }
-    if (result.status > 199 && result.data) {
+    if (result.status > 199) {
       if (result.data.token) {
         APIService.token = result.data.token;
       }
       return {
         success: true,
-        data: result.data as T,
+        data: result.data as ResponseBody,
       };
     }
     return {
       success: false,
-      error: result.data.message || 'error:generic',
+      error: msg || 'error:generic',
     };
   }
 
   /**
-   * Dùng để gửi request lên server
-   * @param slug 
-   * @param body 
+   * Sending request to server
+   * 
+   * Support generic type for ```ResponseBody``` and ```RequestBody```
+   * 
+   * @description
+   * - ```ResponseBody```: type safe for response receive from server
+   * - ```RequestBody```: type safe for request body send to server
+   * 
+   * @param slug
+   * @param body
    */
-  public async request<T> (slug: string, body?: T) {
+  public async request<
+    ResponseBody = any,
+    RequestBody = any,
+  >(slug: string, body?: RequestBody, isLoading?: boolean) {
     try {
-      const result = await this._fetch(slug, body);
+      isLoading && this._callLoadingHandler();
+      const result = await this._fetch<RequestBody>(slug, body);
       this.setHeaders({}); // reset header sau khi gửi request
-      return this._parseResult<T>(result);
+      isLoading && this._callLoadingHandler();
+      return this._parseResult<ResponseBody>(result);
     } catch (error) {
       if (error.response && error.response.status) {
-        return this._parseResult<T>({
+        return this._parseResult({
           status: error.response.status,
-          data: error.response.data as T,
+          data: error.response.data as ResponseBody,
         });
       }
-      return this._parseResult<T>(null);
+      return this._parseResult<ResponseBody>(null);
     }
   }
 }

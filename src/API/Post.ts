@@ -1,4 +1,4 @@
-import { IPost } from "../@types/post.types";
+import { IResponseBodyPost, IRequestBodyPost } from "../@types/post.types";
 import { APIService } from "./APIService";
 
 export class Post extends APIService {
@@ -22,17 +22,17 @@ export class Post extends APIService {
   public async getPost(id: number) {
     const res = await this
       .setMethod('GET')
-      .request<IPost>(`${Post.slug}/${id}`);
+      .request<IResponseBodyPost>(`${Post.slug}/${id}`);
     return res;
   }
 
-  public async createPost(post: IPost) {
+  public async createPost(post: IRequestBodyPost) {
     const res = await this
       .setHeaders({
         test: 'this is a header'
       })
       .setMethod('POST')
-      .request<IPost>(Post.slug, post)
+      .request<IResponseBodyPost, IRequestBodyPost>(Post.slug, post)
     return res;
   }
 }

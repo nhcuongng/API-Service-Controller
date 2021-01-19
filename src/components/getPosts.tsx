@@ -19,7 +19,7 @@ export const GetPosts: React.FC = () => {
     const _res = await PostApi.createPost({
       title: 'create new blog with API Service Manager',
       body: 'Dummy code...',
-      userId: 'Mason Nguyen',
+      userId: 123,
     });
     setRes(JSON.stringify(_res, null, 2))
   }, [])
