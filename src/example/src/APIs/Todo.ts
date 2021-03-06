@@ -1,4 +1,5 @@
-import { APIService } from "./APIService";
+import { APIService } from "../lib/APIService";
+
 
 export class Todo extends APIService {
   static slug = '/todos';
@@ -12,7 +13,7 @@ export class Todo extends APIService {
   }
 
   public async getTodos () {
-    const res = await this
+    const res = await Todo
       .setMethod('GET')
       .request(Todo.slug);
     return res;

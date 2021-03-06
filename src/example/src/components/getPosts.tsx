@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { PostApi } from '../API/Post';
+import { PostApi } from '../APIs/Post';
 import { DisplayResult } from './displayResults';
 
 export const GetPosts: React.FC = () => {

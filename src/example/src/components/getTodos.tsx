@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { ToDoApi } from '../API/Todo';
+import { ToDoApi } from '../APIs/Todo';
 import { DisplayResult } from './displayResults';
 
 export const GetTodos: React.FC = () => {
