@@ -1,6 +1,6 @@
 {
   "name": "easy-control-api",
-  "version": "0.1.7",
+  "version": "0.1.9",
   "description": "API service",
   "main": "dist/index.js",
   "module": "dist/index.es.js",

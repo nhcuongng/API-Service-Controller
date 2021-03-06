@@ -23,6 +23,10 @@ const banner = `
 export default [
   {
     input: inputFileName,
+    external: [
+      ...Object.keys(pkg.dependencies || {}),
+      ...Object.keys(pkg.devDependencies || {}),
+    ],
     output: [
       {
         name: moduleName,

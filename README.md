@@ -12,7 +12,6 @@
 - Control API request in one place, maintain easily.
 - Using axios default, if you want, you can use a axios instance
 - Don't need try/catch on everytime call axios request, API Service handle it for you.
-- Support global error, loading.
 - Typescript support
 
 ## Use stage
